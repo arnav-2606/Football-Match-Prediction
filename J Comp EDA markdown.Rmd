@@ -1,0 +1,52 @@
+---
+title: "JComp EDA"
+author: "Arnav Singh"
+date: "2023-04-02"
+output: html_document
+---
+
+```{r}
+#Naive Bayes
+
+dataset = read.csv("final_dataset.csv")
+test = read.csv("test_set.csv")
+library('varhandle')
+library('e1071',warn.conflicts=FALSE)
+naive_bayes_model<-naiveBayes(FTR ~ ., data = dataset)
+naive_bayes_predictions<-predict(naive_bayes_model, newdata=test)
+naive_bayes_predictions
+table(naive_bayes_predictions,test[,7])
+mean(naive_bayes_predictions==test[,7])
+plot(naive_bayes_predictions,xlab='Result',ylab='Number of Matches')
+```
+
+```{r}
+#LDA
+
+dataset = read.csv("final_dataset.csv")
+test = read.csv("test_set.csv")
+library(MASS)
+#lda.fit = lda(FTR ~ .,data=dataset)
+lda.fit = lda(FTR ~ HomeTeam + AwayTeam + DiffPts+ DiffFormPts,data=dataset)
+summary(lda.fit)
+lda.pred=predict(lda.fit, test[-7,])
+names(lda.pred)
+lda.class=predict(lda.fit,test)$class
+test[,7]
+table(lda.class,test[,7])
+mean(lda.class==test[,7])
+plot(lda.class,xlab='Result',ylab='Number of Matches')
+```
+```{r}
+#QDA
+
+dataset = read.csv("final_dataset.csv")
+test = read.csv("test_set.csv")
+library(MASS)
+qda.fit = qda(FTR ~ HomeTeam + AwayTeam + DiffPts+ DiffFormPts,data=dataset)
+summary(qda.fit)
+qda.class=predict(qda.fit,test)$class
+table(qda.class,test[,7])
+mean(qda.class==test[,7])
+plot(qda.class,xlab='Result',ylab='Number of Matches')
+```
